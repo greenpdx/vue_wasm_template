@@ -1,6 +1,21 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
+import { wasm, conf } from '@/main'
+
+async function run_wasm() {
+  // Load the Wasm file by awaiting the Promise returned by `wasm_bindgen`
+  // `wasm_bindgen` was imported in `index.html`
+  //await wasm_bindgen();
+
+  console.log('index.js loaded')
+
+  // Run main Wasm entry point
+  // This will create a worker from within our Rust code compiled to Wasm
+  wasm.startup()
+}
+
+run_wasm()
 </script>
 
 <template>
@@ -9,7 +24,9 @@ import HelloWorld from './components/HelloWorld.vue'
 
     <div class="wrapper">
       <HelloWorld msg="You did it!" />
+      <input type="text" id="inputNumber" />
 
+      <div id="resultField"></div>
       <nav>
         <RouterLink to="/">Home</RouterLink>
         <RouterLink to="/about">About</RouterLink>

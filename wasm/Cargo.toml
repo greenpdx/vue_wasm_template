@@ -29,8 +29,20 @@ js-sys = "0.3.76"
 version = "0.3.76"
 features = ["console", "Window",
 'Headers', 'Request', 'RequestInit', 'RequestMode', 'Response',
-"Document", "Element", "HtmlElement"
+"Document", "Element", "HtmlElement", "Worker", "MessageEvent",
+"HtmlInputElement", "HtmlCollection", "NodeList"
 ]
+
+[package.metadata.wasm-pack.profile.dev.wasm-bindgen]
+# Should we enable wasm-bindgen's debug assertions in its generated JS glue?
+debug-js-glue = true
+# Should wasm-bindgen demangle the symbols in the "name" custom section?
+demangle-name-section = true
+# Should we emit the DWARF debug info custom sections?
+dwarf-debug-info = true
+# Should we omit the default import path?
+omit-default-module-path = false
+
 
 [dev-dependencies]
 wasm-bindgen-test = "0.3.34"
