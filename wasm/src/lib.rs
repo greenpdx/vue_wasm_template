@@ -143,6 +143,7 @@ impl NumberEval {
 
 #[wasm_bindgen]
 pub fn startup() -> Result<(), JsValue> {
+  
     // Here, we create our worker. In a larger app, multiple callbacks should be
     // able to interact with the code in the worker. Therefore, we wrap it in
     // `Rc<RefCell>` following the interior mutability pattern. Here, it would
@@ -161,17 +162,8 @@ pub fn startup() -> Result<(), JsValue> {
 }
 
 fn setup_input_oninput_callback(worker: Rc<RefCell<web_sys::Worker>>) {
-  let win = window().unwrap();
-  let document = win.document().unwrap();
-
-  console::log_1(&document.get_elements_by_tag_name("input").into());
-  console::log_1(&document.get_element_by_id("inputNumber").into());
-
-  let ele = document
-    .get_element_by_id("inputNumber");
-    //.expect("#inputNumber should exist");
-
-  console::log_1(&ele.into());
+    let document = window().unwrap().document().unwrap();
+ 
   // If our `onmessage` callback should stay valid after exiting from the
   // `oninput` closure scope, we need to either forget it (so it is not
   // destroyed) or store it somewhere. To avoid leaking memory every time we
@@ -219,7 +211,7 @@ fn setup_input_oninput_callback(worker: Rc<RefCell<web_sys::Worker>>) {
       }
   });
   console::log_1(&"here".into());
-  /*
+  
   // Attach the closure as `oninput` callback to the input field.
   let ele = document
       .get_element_by_id("inputNumber")
@@ -229,7 +221,7 @@ fn setup_input_oninput_callback(worker: Rc<RefCell<web_sys::Worker>>) {
     ele.dyn_ref::<HtmlInputElement>()
       .expect("#inputNumber should be a HtmlInputElement")
       .set_oninput(Some(callback.as_ref().unchecked_ref()));
-    */
+    
   console::log_1(&"next".into());
 
   // Leaks memory.

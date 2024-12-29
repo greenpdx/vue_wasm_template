@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
-import { wasm, conf } from '@/main'
+import { wasm, conf} from '@/main'
+import { onMounted } from 'vue'
 
 async function run_wasm() {
   // Load the Wasm file by awaiting the Promise returned by `wasm_bindgen`
@@ -12,7 +13,10 @@ async function run_wasm() {
 
   // Run main Wasm entry point
   // This will create a worker from within our Rust code compiled to Wasm
+onMounted(() => {
   wasm.startup()
+})
+
 }
 
 run_wasm()
