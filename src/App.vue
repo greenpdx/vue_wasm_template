@@ -2,28 +2,30 @@
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 import { wasm, conf} from '@/main'
-import { onMounted } from 'vue'
+import { onMounted, ref, inject } from 'vue'
+import { useEchoWorker } from './composable/useEchoWorker'
 
-async function run_wasm() {
-  // Load the Wasm file by awaiting the Promise returned by `wasm_bindgen`
-  // `wasm_bindgen` was imported in `index.html`
-  //await wasm_bindgen();
+const test = inject('wasm')
+console.log(test)
 
-  console.log('index.js loaded')
+const msg = ref('TEST')
 
-  // Run main Wasm entry point
-  // This will create a worker from within our Rust code compiled to Wasm
+const { rply, fetching} = useEchoWorker(msg)
+
+console.log('p1')
+
 onMounted(() => {
-  wasm.startup()
+  wasm.tsturl(conf)
+  console.log('a')
 })
-
-}
-
-run_wasm()
+//run_wasm()
 </script>
 
 <template>
   <header>
+    <input v-model="msg" /><br>
+    <div v-if="fetching">Loading</div>
+    <div v-else-if="rply">{{ rply }}</div>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">

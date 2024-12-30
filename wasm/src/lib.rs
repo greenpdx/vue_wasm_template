@@ -1,10 +1,11 @@
 use serde_json::Value;
-
+use serde::{Serialize, Deserialize};
 mod utils;
 
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen(getter_with_clone)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Config {
     #[wasm_bindgen(skip)]
     pub fetch_url: String,
@@ -12,11 +13,33 @@ pub struct Config {
     pub passwd: String,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[wasm_bindgen(getter_with_clone)]
+pub struct WorkerRequest {
+    id: String,
+    msg: String,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone)]
+#[wasm_bindgen(getter_with_clone)]
+pub struct WorkerResponse {
+    id: String,
+    rply: String,
+}
+#[wasm_bindgen]
+pub fn wtest(data: JsValue) -> Result<JsValue, JsValue> {
+    let data: WorkerRequest = serde_wasm_bindgen::from_value(data)?;
+    let resp = WorkerResponse { id: data.id, rply: data.msg };
+    Ok(serde_wasm_bindgen::to_value(&resp)?)
+}
+
+
 #[wasm_bindgen]
 extern "C" {
     fn alert(s: &str);
     unsafe fn prompt(s: &str) -> String;
 }
+
 
 #[wasm_bindgen]
 pub fn greet() -> String {
@@ -51,9 +74,9 @@ pub fn init(env: JsValue) -> Result<Config, JsValue> {
 }
 
 #[wasm_bindgen]
-pub fn tstpass(conf: &Config) -> Result<JsValue, JsValue> {
-    let passwd = &conf.passwd;
-    Ok(JsValue::from_str(&passwd))
+pub fn tsturl(conf: &Config) -> Result<JsValue, JsValue> {
+    let fetch = &conf.fetch_url;
+    Ok(JsValue::from_str(&fetch))
 }
 
 use wasm_bindgen_futures::JsFuture;
