@@ -28,7 +28,7 @@ pub struct WorkerResponse {
 }
 
 #[wasm_bindgen]
-pub fn wtest(data: JsValue) -> Result<JsValue, JsValue> {
+pub async fn wtest(data: JsValue) -> Result<JsValue, JsValue> {
     let data: WorkerRequest = serde_wasm_bindgen::from_value(data)?;
     let resp = WorkerResponse { id: data.id, rply: data.msg };
     Ok(serde_wasm_bindgen::to_value(&resp)?)

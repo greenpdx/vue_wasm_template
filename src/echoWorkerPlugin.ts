@@ -1,7 +1,7 @@
 import type { Plugin } from "vue";
 import * as wasm from '../pkg';
 
-import EchoWorker from "./echoWorker?worker";
+import EchoWorker from "./echoWorker?worker&inline";
 import { echoWorkerKey } from "./injectionKeys.ts";
 
 type WorkerPluginOptions = {
