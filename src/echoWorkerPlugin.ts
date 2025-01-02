@@ -68,9 +68,9 @@ const plugin: Plugin = {
       }
     }
 
-    function addWorker() {
+    async function addWorker() {
       if (workers.length < MAX_WORKERS) {
-        const worker = new EchoWorker();
+        const worker = await new EchoWorker();
 
         worker.addEventListener("message", (event: MessageEvent<WorkerResponse>) => {
           const resolve = resolvers[event.data.id];
