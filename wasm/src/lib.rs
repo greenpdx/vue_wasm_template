@@ -16,16 +16,17 @@ pub struct Config {
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[wasm_bindgen(getter_with_clone)]
 pub struct WorkerRequest {
-    id: String,
-    msg: String,
+    pub id: String,
+    pub msg: String,
 }
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 #[wasm_bindgen(getter_with_clone)]
 pub struct WorkerResponse {
-    id: String,
-    rply: String,
+    pub id: String,
+    pub rply: String,
 }
+
 #[wasm_bindgen]
 pub fn wtest(data: JsValue) -> Result<JsValue, JsValue> {
     let data: WorkerRequest = serde_wasm_bindgen::from_value(data)?;

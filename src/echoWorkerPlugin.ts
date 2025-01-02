@@ -1,5 +1,5 @@
 import type { Plugin } from "vue";
-import type { WorkerResponse, WorkerRequest } from "./echoWorker";
+import * as wasm from '../pkg';
 
 import EchoWorker from "./echoWorker?worker";
 import { echoWorkerKey } from "./injectionKeys.ts";
@@ -16,7 +16,7 @@ const plugin: Plugin = {
 
     const workers: Worker[] = [];
     const workerPool: Worker[] = [];
-    const messageQueue: WorkerRequest[] = [];
+    const messageQueue: wasm.WorkerRequest[] = [];
     const resolvers: Record<string, (value: any) => void> = {};
 
     for (let i = 0; i < MIN_WORKERS; i++) {
@@ -35,7 +35,7 @@ const plugin: Plugin = {
       return new Promise<string>((resolve) => {
         resolvers[id] = resolve;
 
-        const request: WorkerRequest = {
+        const request: wasm.WorkerRequest = {
           id,
           msg,
         };
@@ -44,7 +44,7 @@ const plugin: Plugin = {
       });
     }
 
-    function queueMessage(query: WorkerRequest) {
+    function queueMessage(query: wasm.WorkerRequest) {
       messageQueue.push(query);
       processNextQuery();
     }
@@ -72,7 +72,7 @@ const plugin: Plugin = {
       if (workers.length < MAX_WORKERS) {
         const worker = await new EchoWorker();
 
-        worker.addEventListener("message", (event: MessageEvent<WorkerResponse>) => {
+        worker.addEventListener("message", (event: MessageEvent<wasm.WorkerResponse>) => {
           const resolve = resolvers[event.data.id];
           console.log(event.data)
           resolve(event.data.rply);

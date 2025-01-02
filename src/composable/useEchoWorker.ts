@@ -6,7 +6,7 @@ import { echoWorkerKey } from '../injectionKeys'
 export const useEchoWorker = (_msg: MaybeRef<string>) => {
   const msg = ref(_msg)
 
-  const rply = ref<string | null>(null)
+  const rply = ref<string | null>(msg.value)
   const fetching = ref(false)
 
   const echoWorker = inject(echoWorkerKey)
