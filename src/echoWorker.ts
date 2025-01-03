@@ -8,8 +8,8 @@ onmessageerror = msgError;
 
 
 async function msgHandler(e: MessageEvent<wasm.WorkerRequest>) {
-    console.log(e);
     const data = e.data;
+    console.log(data);
     const response: wasm.WorkerResponse = await wasm.wtest(data);
     //console.log(response)
     postMessage(response);

@@ -2,15 +2,38 @@
 import { RouterLink, RouterView } from 'vue-router'
 import HelloWorld from './components/HelloWorld.vue'
 import { wasm, conf} from '@/main'
-import { onMounted, ref, inject } from 'vue'
-import { useEchoWorker } from './composable/useEchoWorker'
+import { onMounted, ref, inject, watch } from 'vue'
+import { WorkerRequest } from '../pkg/wasm'
 
 const test = inject('wasm')
 console.log(test)
 
 const msg = ref('TEST')
+const rply = ref('TEST')
 
-const { rply, fetching} = useEchoWorker(msg)
+const echoWorker = import.meta.env.DEV
+    // In development mode, `import`s in workers are not transformed, so you
+    // must use `{ type: "module" }`.
+  ? new Worker(new URL("./echoWorker.ts", import.meta.url), { type: "module" })
+    // In build mode, let Vite and vite-plugin-top-level-await build a single-file
+    // bundle of your worker that works on both modern browsers and Firefox.
+  : new Worker(new URL("./echoWorker.ts", import.meta.url), { type: "classic" });
+
+echoWorker.addEventListener("message", (evt: MessageEvent<wasm.WorkerResponse>) => {
+  rply.value = evt.data.rply
+  console.log(evt.data)
+})
+
+watch(
+  [msg],
+  async () => {
+    const rawMsg = JSON.parse(JSON.stringify(msg.value))
+    const id = Math.random().toString();
+    const req: WorkerRequest =  {id: id, msg: rawMsg}
+
+    await echoWorker.postMessage(req)
+  }
+)
 
 console.log('p1')
 
@@ -24,8 +47,7 @@ onMounted(() => {
 <template>
   <header>
     <input v-model="msg" /><br>
-    <div v-if="fetching">Loading</div>
-    <div v-else-if="rply">{{ rply }}</div>
+    <div>{{ rply }}</div>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
     <div class="wrapper">
