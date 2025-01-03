@@ -29,4 +29,5 @@ export default defineConfig({
       topLevelAwait()
     ]
   },
+  format: 'iife'
 })

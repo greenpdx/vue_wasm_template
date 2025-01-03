@@ -1,7 +1,7 @@
 import type { Plugin } from "vue";
 import * as wasm from '../pkg';
 
-import EchoWorker from "./echoWorker?worker&inline";
+import EchoWorker from "./echoWorker?worker";
 import { echoWorkerKey } from "./injectionKeys.ts";
 
 type WorkerPluginOptions = {
@@ -41,6 +41,7 @@ const plugin: Plugin = {
         };
 
         queueMessage(request);
+
       });
     }
 
@@ -51,16 +52,19 @@ const plugin: Plugin = {
 
     function processNextQuery() {
       adjustWorkerPool();
+      console.log("ASwait", workerPool.length, messageQueue.length)
 
       if (workerPool.length > 0 && messageQueue.length > 0) {
         const worker = workerPool.shift();
         const msg = messageQueue.shift();
+        console.log("ASpost", worker, msg)
 
         worker?.postMessage(msg);
       }
     }
 
     function adjustWorkerPool() {
+      console.log("AWP",messageQueue.length, workerPool.length)
       if (messageQueue.length > workerPool.length) {
         addWorker();
       } else if (messageQueue.length < workerPool.length) {
@@ -68,9 +72,10 @@ const plugin: Plugin = {
       }
     }
 
-    async function addWorker() {
+    function addWorker() {
       if (workers.length < MAX_WORKERS) {
-        const worker = await new EchoWorker();
+        const worker = new EchoWorker({type: 'classic'});
+        console.log("aw", workers.length, workerPool.length)
 
         worker.addEventListener("message", (event: MessageEvent<wasm.WorkerResponse>) => {
           const resolve = resolvers[event.data.id];

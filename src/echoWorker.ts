@@ -1,6 +1,11 @@
 import * as wasm from '../pkg/wasm.js';
 
-console.log(wasm);
+//console.log(wasm);
+
+onmessage = msgHandler;
+onerror = errHandler;
+onmessageerror = msgError;
+
 
 async function msgHandler(e: MessageEvent<wasm.WorkerRequest>) {
     console.log(e);
@@ -18,6 +23,11 @@ function msgError(evt: Event | string) {
     console.log("Msg Error", evt);
 }
 
-onmessage = msgHandler;
-onerror = errHandler;
-onmessageerror = msgError;
+
+
+
+
+
+//onmessage = msgHandler;
+//onerror = errHandler;
+//onmessageerror = msgError;
