@@ -6,6 +6,7 @@ onmessage = msgHandler;
 onerror = errHandler;
 onmessageerror = msgError;
 
+console.log(onmessage)
 
 async function msgHandler(e: MessageEvent<wasm.WorkerRequest>) {
     const data = e.data;

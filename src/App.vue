@@ -9,7 +9,19 @@ const test = inject('wasm')
 console.log(test)
 
 const msg = ref('TEST')
-const rply = ref('TEST')
+const rply = ref('')
+
+function mkdata(msg: string): wasm.WorkerRequest {
+  const rawMsg = JSON.parse(JSON.stringify(msg))
+  const id = Math.random().toString();
+  const req: WorkerRequest =  {id: id, msg: rawMsg}
+  return req;
+}
+
+async function postMsg(worker: Worker, data: string) {
+  const req = mkdata(data)
+  await worker.postMessage(req) 
+}
 
 const echoWorker = import.meta.env.DEV
     // In development mode, `import`s in workers are not transformed, so you
@@ -27,26 +39,31 @@ echoWorker.addEventListener("message", (evt: MessageEvent<wasm.WorkerResponse>) 
 watch(
   [msg],
   async () => {
-    const rawMsg = JSON.parse(JSON.stringify(msg.value))
-    const id = Math.random().toString();
-    const req: WorkerRequest =  {id: id, msg: rawMsg}
-
-    await echoWorker.postMessage(req)
+    await postMsg(echoWorker, msg.value);
   }
 )
 
-console.log('p1')
-
+{
+  await postMsg(echoWorker, msg.value);
+  console.log('post')
+}
 onMounted(() => {
   wasm.tsturl(conf)
-  console.log('a')
+  console.log('mnt')
+
 })
 //run_wasm()
+
+function ichg(evt: Event) {
+  const val = (<HTMLInputElement>evt.target)
+  console.log(evt, val.value)
+}
+
 </script>
 
 <template>
   <header>
-    <input v-model="msg" /><br>
+    <input v-model="msg" @change="ichg"/><br>
     <div>{{ rply }}</div>
     <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
 
